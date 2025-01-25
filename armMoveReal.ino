@@ -1,5 +1,9 @@
 #include <LobotServoController.h>
 #include <NewPing.h>
+#include <IRremote.hpp>
+#include <elapsedMillis.h>
+
+#define IR_RECEIVE_PIN 10 // IR remote pin
 
 #define TRIGGER_PIN  12  // Arduino pin tied to trigger pin on the ultrasonic sensor.
 #define ECHO_PIN     11  // Arduino pin tied to echo pin on the ultrasonic sensor.
@@ -9,15 +13,17 @@
 LobotServoController myse(Serial);
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 
-LobotServo servos[6];
+LobotServo servos[6]; // setup arm servo array
 
-unsigned long prev_mill = 0;
+int IR_COOLDOWN = 500; // cooldown between IR information receiving in milliseconds
+elapsedMillis IR_prev;
 
 void setup() {
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
+  IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
   servos[0].ID = 1;
   servos[1].ID = 2;
   servos[2].ID = 3;
@@ -31,8 +37,27 @@ void setup() {
 
 void loop() {
   unsigned long mill = millis();
-  //Serial.println(50000);
+  // receive IR signal after cooldown, send code received (if any) to IR functions
+  if (IR_prev >= IR_COOLDOWN){
+      if (IrReceiver.decode()) {
+        IrReceiver.resume(); // Enable receiving of the next value
+        IR_prev = 0;
+        IR_input_map(IrReceiver.decodedIRData.command);
+      }
+  }
+}
 
+
+void IR_input_map(int code){
+  // CH- = 69, CH = 70, CH+ = 71, |<< = 68, >>| = 64, >|| = 67, - = 7, + = 21, EQ = 9, 100+ = 25, 200+ = 13, 
+  // 0 = 22, 1 = 12, 2 = 24, 3 = 94, 4 = 8, 5 = 28, 6 = 90, 7 = 66, 8 = 82, 9 = 74
+  if (code == 12){
+    sonar_expected_finder();
+  }
+}
+
+
+void sonar_expected_finder(){
   bool found_object = find_object();
   unsigned int distance = sonar.ping_median();
   if (distance >= 5 && found_object) {
