@@ -187,14 +187,6 @@ class horizontalScan : public armFunction {
 
       last_distance = distance;
 
-      bool stopped = myse.waitForStopping(uint32_t 20000);
-
-      if (stopped) {
-        servos[5].Position = serv_5_range[1];
-        servos[2].Position = serv_2_range[0];
-        myse.moveServos(servos, 6, SCAN_SPEED);
-      }
-
       // if already moving, dont need to move
       if (!moving){
         servos[5].Position = serv_5_range[1];
