@@ -2,7 +2,7 @@
 This project utilizes an arduino, sonar sensor, and AMB82-Mini camera to control a HiWonder Learm robotic arm.
 
 ## Arm Handler
-Working with the included documentation, I created a wrapper for the arm that allows IR signals to always be received while also updating arm commands. This handler is seen in handler.cpp and handler.h. 
+Working with the included documentation, I created a wrapper for the arm that allows IR signals to always be received while also updating arm commands. This handler is seen in [handler.cpp](handler.cpp) and handler.h. 
 
 ## Timer
 I created a timer class to track if the arm was still moving, which works in conjunction with the handler. This prevents multiple commands from being sent to the arm (which causes motor spasms).
