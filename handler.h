@@ -4,6 +4,7 @@
 #include <LobotServoController.h>
 #include <SoftwareSerial.h>
 #include "timer.h"
+#include <NewPing.h>
 
 #define FUN_NUMBER 3 //number of arm functions in armHandler, update if some are added
 
@@ -16,6 +17,7 @@ class armHandler {
     int _enabled; // which function is enabled in ^, -1 for none
     bool _obj_found;
     Timer _delay_timer; // timer to track arm movement
+    NewPing sonar;
 
   public:
     armHandler();
@@ -23,9 +25,10 @@ class armHandler {
     void update();
     void reset();
     void enable(int function_number);
-    bool moveServos(int move_time);
+    bool moveServos(long move_time);
     Timer* getTimeObject();
     LobotServo* getServos();
+    NewPing* getSonar();
 };
 
 

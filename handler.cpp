@@ -1,11 +1,19 @@
 #include "Arduino.h"
 #include "handler.h"
 #include "sonarFind.h"
+#include "grab.h"
 #include "timer.h"
 #include <LobotServoController.h>
 #include <SoftwareSerial.h>
+#include <NewPing.h>
 
 // 0 = obj not found, 1 = obj found, 2 = algorithm ended
+
+// sonar stuff
+#define TRIGGER_PIN  12  // Arduino pin tied to trigger pin on the ultrasonic sensor.
+#define ECHO_PIN     11  // Arduino pin tied to echo pin on the ultrasonic sensor.
+#define MAX_DISTANCE 300 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
+#define ROUNDING_ENABLED False
 
 // rx/tx pins for arm communication
 #define arm_rx 5
@@ -16,9 +24,10 @@ SoftwareSerial armSerial(arm_rx, arm_tx);
 LobotServoController myse(armSerial);
 
 
-armHandler::armHandler() {
+armHandler::armHandler() : sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE) {
   // functions here, grab function last, add new functions before grab but after the rest
   _functions[0] = sonar_find_horizontal;
+  _functions[2] = simple_grab;
   _enabled = -1; // which function starts as enabled, -1 for none
 
   _obj_found = false;
@@ -33,7 +42,6 @@ armHandler::armHandler() {
   for (int i = 0; i < 6; i++) {
     servos[i].Position = 1500;
   }
-  this->reset();
 }
 
 
@@ -59,7 +67,7 @@ void armHandler::update() {
   }
 
   // if we found object, switch to grabbing mode
-  if (_obj_found && (_enabled == (FUN_NUMBER - 1) )) {
+  if (_obj_found && (_enabled != (FUN_NUMBER - 1) )) {
     _enabled = FUN_NUMBER - 1;
   }
 }
@@ -71,7 +79,7 @@ void armHandler::reset() {
   for (int i = 0; i < 6; i++) {
     servos[i].Position = 1500;
   }
-  this->moveServos(8000);
+  moveServos(10000);
 }
 
 
@@ -82,7 +90,7 @@ void armHandler::enable(int function_number) {
 
 
 // move the servos (edited in this object's "servos" array) over move_time milliseconds, also updates timer
-bool armHandler::moveServos(int move_time) {
+bool armHandler::moveServos(long move_time) {
   // if arm is already moving, return false
   if (!_delay_timer.isDone()) {
     return false;
@@ -102,4 +110,8 @@ Timer* armHandler::getTimeObject() {
 // get the servo array for this object
 LobotServo* armHandler::getServos() {
   return servos;
+}
+
+NewPing* armHandler::getSonar() {
+  return &sonar;
 }

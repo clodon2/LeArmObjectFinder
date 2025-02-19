@@ -3,13 +3,14 @@ elapsedMillis IR_prev;
 
 // receive IR signal after cooldown, send code received (if any) to IR functions
 void IR_check(){
-  if (IR_prev >= IR_COOLDOWN){
-      if (IrReceiver.decode()) {
+    if (IrReceiver.decode()) {
+      if (IR_prev >= IR_COOLDOWN){
         IR_prev = 0;
         IR_input_map(IrReceiver.decodedIRData.command);
       }
-      IrReceiver.resume(); // Enable receiving of the next value
-  }
+    }
+    IrReceiver.resume(); // Enable receiving of the next value
+  
 }
 
 

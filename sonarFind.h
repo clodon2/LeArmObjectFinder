@@ -6,4 +6,9 @@
 int sonar_find_horizontal(armHandler*);
 
 
+bool sonar_find_reset(armHandler*);
+
+
+bool is_object(unsigned long, unsigned long);
+
 #endif
