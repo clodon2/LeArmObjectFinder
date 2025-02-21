@@ -18,7 +18,7 @@ The arm can be controlled with a wireless remote using basic infrared commands. 
 The original searching method for the arm is with a sonar distance sensor. We scan horizontally and see if the distance changes, if it does there is an object there. See [sonarFind.cpp](sonarFind.cpp) and [sonarFind.h](sonarFind.h).
 
 ## Grabbing
-The grabbing algorithm scans around the object that was detected and determines roughly how big it is and how to grab it.
+The grabbing algorithm scans around the object that was detected and determines roughly how big it is and how to grab it. See [grab.cpp](grab.cpp) and [grab.h](grab.h).
 
 ## Camera
 A camera with on-board processing (AMB82-Mini) will be implemented. This camera will be coded with object detection algorithms in openCV/Yolo. Over software serial communication, we will take the data gathered from the camera and send it to the arduino, and then send it to the grab function.
