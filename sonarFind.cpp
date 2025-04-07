@@ -2,8 +2,10 @@
 #include "sonarFind.h"
 #include "handler.h"
 #include "timer.h"
-#include <LobotServoController.h>
-#include <NewPing.h>
+#include <Wire.h>
+#include <VL53L0X.h>
+
+
 // you will likely need all of these includes for your function ^
 
 // 0 = obj not found, 1 = obj found, 2 = algorithm ended
@@ -15,11 +17,13 @@ bool moved = false;
 
 unsigned long past_distance = 0;
 // distnace measurements vary by this percent (differences within it will be ignored)
-float dist_variance = .3;
+float dist_variance = .05;
 int x_increment = 50;
 
 // count objects that appear in a row
 int object_counter = 0;
+// save last "normal" position
+int normal_distance = 0;
 
 
 // search primarily horizontally using the sonar sensor
@@ -38,17 +42,20 @@ int sonar_find_horizontal(armHandler* handler) {
     return 0;
   }
 
+  VL53L0X* ir = handler->getIR();
+
   // if we have searched all around, we can end algorithm
   if (servos[2].Position >= 1000) {
     first_iteration = true;
     x_increment = 50;
     handler->reset();
+    reset_values();
+    ir->stopContinuous();
     return 2;
   }
 
   // see and compare distance
-  NewPing* sonar = handler->getSonar();
-  unsigned long distance = sonar->ping_median();
+  unsigned long distance = ir->readRangeContinuousMillimeters();
   if (past_distance == 0) {
     past_distance = distance;
   }
@@ -56,8 +63,9 @@ int sonar_find_horizontal(armHandler* handler) {
   Serial.print(" ");
   Serial.print(past_distance);
   Serial.print(" ");
-  Serial.println(is_object(distance, past_distance));
+  Serial.println(object_counter);
   if (is_object(distance, past_distance)) {
+    reset_values();
     return 1;
   }
   past_distance = distance;
@@ -92,6 +100,9 @@ bool sonar_find_reset(armHandler* handler) {
   servos[3].Position = 1000;
   servos[5].Position = 500;
   handler->moveServos(5000);
+  reset_values();
+  VL53L0X* ir = handler->getIR();
+  ir->startContinuous();
   return true;
 }
 
@@ -100,13 +111,43 @@ bool sonar_find_reset(armHandler* handler) {
 bool is_object(unsigned long dist1, unsigned long dist2) {
   // throw out if either is 0 since scan is invalid
   if ((dist1 == 0) or (dist2 == 0)) {
+    object_counter = 0;
     return false;
   }
   unsigned long dist1_lower = dist1 * (1 - dist_variance);
   unsigned long dist1_higher = dist1 * (1 + dist_variance);
-  // dist1_lower < dist2 < dist1_higher
-  if ((dist1_lower < dist2) && (dist1_higher > dist2)) {
-    return false;
+  if (object_counter > 0) {
+    if ((dist1_lower < normal_distance) && (dist1_higher > normal_distance)) {
+      object_counter = 0;
+    }
+    else {
+      object_counter += 1;
+    }
   }
-  return true;
+  // dist1_lower < dist2 < dist1_higher
+  else {
+    if ((dist1_lower < dist2) && (dist1_higher > dist2)) {
+      object_counter = 0;
+      normal_distance = dist1;
+    }
+    // objects can only be closer, not farther
+    else if (dist1 > dist2) {
+      object_counter = 0;
+    }
+    else {
+      object_counter += 1;
+    }
+  }
+  // if different from normal for enough scans, probably object
+  if (object_counter > 3) {
+    return true;
+  }
+  return false;
+}
+
+
+void reset_values() {
+  object_counter = 0;
+  normal_distance = 0;
+  past_distance = 0;
 }

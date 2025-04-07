@@ -3,7 +3,7 @@
 #include "handler.h"
 #include "timer.h"
 #include <LobotServoController.h>
-#include <NewPing.h>
+#include <VL53L0X.h>
 
 
 int simple_grab(armHandler* handler) {
@@ -16,8 +16,8 @@ int simple_grab(armHandler* handler) {
     return 0;
   }
 
-  NewPing* sonar = handler->getSonar();
-  int distance = sonar->ping_median();
+  VL53L0X* ir = handler->getIR();
+  int distance = ir->readRangeContinuousMillimeters();
 
   Serial.println(distance);
 

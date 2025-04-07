@@ -11,4 +11,7 @@ bool sonar_find_reset(armHandler*);
 
 bool is_object(unsigned long, unsigned long);
 
+
+void reset_values();
+
 #endif

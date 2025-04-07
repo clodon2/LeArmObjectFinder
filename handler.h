@@ -4,7 +4,7 @@
 #include <LobotServoController.h>
 #include <SoftwareSerial.h>
 #include "timer.h"
-#include <NewPing.h>
+#include <VL53L0X.h>
 
 #define FUN_NUMBER 3 //number of arm functions in armHandler, update if some are added
 
@@ -17,7 +17,7 @@ class armHandler {
     int _enabled; // which function is enabled in ^, -1 for none
     bool _obj_found;
     Timer _delay_timer; // timer to track arm movement
-    NewPing sonar;
+    VL53L0X IR_sensor;
 
   public:
     armHandler();
@@ -28,7 +28,9 @@ class armHandler {
     bool moveServos(long move_time);
     Timer* getTimeObject();
     LobotServo* getServos();
-    NewPing* getSonar();
+    VL53L0X* getIR();
+    bool toggleIR();
+    int* getCameraObjects();
 };
 
 
