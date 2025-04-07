@@ -6,7 +6,7 @@ This project utilizes an arduino, sonar sensor, and AMB82-Mini camera to control
 # Modules
 
 ## Arm Handler
-Working with the included documentation, I created a wrapper for the arm that allows IR signals to always be received while also updating arm commands. This handler is seen in [handler.cpp](handler.cpp) and [handler.h](Arduino/handler.h). 
+Working with the included documentation, I created a wrapper for the arm that allows IR signals to always be received while also updating arm commands. This handler is seen in [handler.cpp](Arduino/handler.cpp) and [handler.h](Arduino/handler.h). 
 
 ## Timer
 I created a timer class to track if the arm was still moving, which works in conjunction with the handler. This prevents multiple commands from being sent to the arm (which causes motor spasms). See [timer.cpp](Arduino/timer.cpp) and [timer.h](Arduino/timer.h).
@@ -15,7 +15,7 @@ I created a timer class to track if the arm was still moving, which works in con
 The arm can be controlled with a wireless remote using basic infrared commands. This allows us to showcase multiple object detection methods and shut off the arm if something goes wrong (unplugging it works too). See [IR.ino](Arduino/IR.ino).
 
 ## Sonar 
-The original searching method for the arm was with a sonar distance sensor. We scan horizontally and see if the distance changes, if it does there is an object there. See [sonarFind.cpp](sonarFind.cpp) and [sonarFind.h](Arduino/sonarFind.h). **This was deprecated due to the sonar sensor being wildly inaccurate.**
+The original searching method for the arm was with a sonar distance sensor. We scan horizontally and see if the distance changes, if it does there is an object there. See [sonarFind.cpp](Arduino/sonarFind.cpp) and [sonarFind.h](Arduino/sonarFind.h). **This was deprecated due to the sonar sensor being wildly inaccurate.**
 
 ## Infrared Distance Sensor
 Distance to objects is determined with a VL53L0/1XV2 IR distance sensor, which is a stunningly accurate and small sensor. Implemented with the VL53L0X.h library, we use it for grabbing objects, in the camera pickup algorithm, and the modified sonar sensor search (working with IR). 
