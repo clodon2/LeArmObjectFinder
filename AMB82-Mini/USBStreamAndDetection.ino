@@ -45,14 +45,14 @@ NNObjectDetection ObjDet;
 UVCD usb_uvcd;
 
 // Lower resolution for NN processing
-#define NNWIDTH  576
-#define NNHEIGHT 320
+#define NNWIDTH  1280
+#define NNHEIGHT 720
 
 StreamIO videoStreamer(1, 1);    // 1 Input Video -> 1 Output USB_CAM
 StreamIO videoStreamerNN(1, 1);
-VideoSetting stream_config(VIDEO_HD, 10, VIDEO_H264, 0);
-VideoSetting configNN(NNWIDTH, NNHEIGHT, 10, VIDEO_RGB, 0);
-VideoSetting config(VIDEO_HD, 10, VIDEO_H264, 0);
+VideoSetting stream_config(VIDEO_HD, 5, VIDEO_H264, 0);
+VideoSetting configNN(NNWIDTH, NNHEIGHT, 5, VIDEO_RGB, 0);
+VideoSetting config(VIDEO_HD, 5, VIDEO_H264, 0);
 void setup()
 {
     Serial1.begin(31250);
@@ -63,12 +63,12 @@ void setup()
     camera_uvcd.configVideoChannel(CHANNELNN, configNN);
     // Configure usb_uvcd with identical video format information
     usb_uvcd.configVideo(stream_config);
-    camera_uvcd.videoInit();
+    camera_uvcd.videoInit();  
 
     // Configure object detection with corresponding video format information
     // Select Neural Network(NN) task and models
     ObjDet.configVideo(configNN);
-    ObjDet.modelSelect(OBJECT_DETECTION, DEFAULT_YOLOV4TINY, NA_MODEL, NA_MODEL);
+    ObjDet.modelSelect(OBJECT_DETECTION, CUSTOMIZED_YOLOV7TINY, NA_MODEL, NA_MODEL);
     ObjDet.begin();
 
     // Configure StreamIO object to stream data from camera video channel to usb_uvcd
@@ -101,7 +101,8 @@ void setup()
 
 void loop()
 {
-    if (!usb_uvcd.isUsbUvcConnected(camera_uvcd.videostream_status(STREAM_CHANNEL))) {
+    if (false) {
+        // !usb_uvcd.isUsbUvcConnected(camera_uvcd.videostream_status(STREAM_CHANNEL))
         Serial.println("USB UVC device disconnected");
         // Handle disconnection processes
         if (disconnect == 0) {
@@ -135,34 +136,43 @@ void loop()
                     Serial1.println('<');
                     Serial1.println(itemList[obj_type].objectName);
                     */
-                    Serial1.println(xmin);
-                    Serial1.println(ymin);
-                    Serial1.println(xmax);
-                    Serial1.println(ymax);
+                    char simple_message[25];
+
+                    snprintf(simple_message, 25, "%d %d %d %d.", xmin, ymin, xmax, ymax);
+                    Serial1.println(simple_message);
                     /*
                     Serial1.println('>');
                     */
                     // Draw boundary box
-                    printf("Item %d %s:\t%d %d %d %d\n\r", i, itemList[obj_type].objectName, xmin, xmax, ymin, ymax);
-                    OSD.drawRect(STREAM_CHANNEL, xmin, ymin, xmax, ymax, 3, OSD_COLOR_WHITE);
-                    OSD.drawPoint(STREAM_CHANNEL, xmin, ymin, 10, OSD_COLOR_BLUE);
-                    OSD.drawPoint(STREAM_CHANNEL, xmax, ymax, 10, OSD_COLOR_RED);
+                    if (usb_uvcd.isUsbUvcConnected(camera_uvcd.videostream_status(STREAM_CHANNEL))) {
+                      printf("Item %d %s:\t%d %d %d %d\n\r", i, itemList[obj_type].objectName, xmin, xmax, ymin, ymax);
+                      OSD.drawRect(STREAM_CHANNEL, xmin, ymin, xmax, ymax, 3, OSD_COLOR_WHITE);
+                      OSD.drawPoint(STREAM_CHANNEL, xmin, ymin, 10, OSD_COLOR_BLUE);
+                      OSD.drawPoint(STREAM_CHANNEL, xmax, ymax, 10, OSD_COLOR_RED);
+                    
 
-                    // Print identification text
-                    char text_str[20];
-                    snprintf(text_str, sizeof(text_str), "%s %d", itemList[obj_type].objectName, item.score());
-                    OSD.drawText(STREAM_CHANNEL, xmin, ymin - OSD.getTextHeight(STREAM_CHANNEL), text_str, OSD_COLOR_CYAN);
+                      // Print identification text
+                      char text_str[20];
+                      snprintf(text_str, sizeof(text_str), "%s %d", itemList[obj_type].objectName, item.score());
+                      OSD.drawText(STREAM_CHANNEL, xmin, ymin - OSD.getTextHeight(STREAM_CHANNEL), text_str, OSD_COLOR_CYAN);
 
-                    char top_str[20];
-                    snprintf(top_str, sizeof(top_str), "%d %s %d", xmin, ", ", ymin);
-                    OSD.drawText(STREAM_CHANNEL, xmin, ymin + OSD.getTextHeight(STREAM_CHANNEL), top_str, OSD_COLOR_BLUE);
+                      char top_str[20];
+                      snprintf(top_str, sizeof(top_str), "%d %s %d", xmin, ", ", ymin);
+                      OSD.drawText(STREAM_CHANNEL, xmin, ymin + OSD.getTextHeight(STREAM_CHANNEL), top_str, OSD_COLOR_BLUE);
 
-                    char bot_str[20];
-                    snprintf(bot_str, sizeof(bot_str), "%d %s %d", xmax, ", ", ymax);
-                    OSD.drawText(STREAM_CHANNEL, xmax, ymin + OSD.getTextHeight(STREAM_CHANNEL), bot_str, OSD_COLOR_RED);
+                      char bot_str[20];
+                      snprintf(bot_str, sizeof(bot_str), "%d %s %d", xmax, ", ", ymax);
+                      OSD.drawText(STREAM_CHANNEL, xmax, ymin + OSD.getTextHeight(STREAM_CHANNEL), bot_str, OSD_COLOR_RED);
+                    }
                 }
+              else {
+                Serial1.println("-1 -1 -1 -1.");
+              }
             }
         }
+      else {
+        Serial1.println("-1 -1 -1 -1.");
+      }
     }
     OSD.update(STREAM_CHANNEL);
 

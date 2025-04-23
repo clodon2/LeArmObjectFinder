@@ -10,8 +10,14 @@ struct ObjectDetectionItem {
 // List of objects the pre-trained model is capable of recognizing
 // Index number is fixed and hard-coded from training
 // Set the filter value to 0 to ignore any recognized objects
-ObjectDetectionItem itemList[80] = {
-    {0,  "person",         1},
+ObjectDetectionItem itemList[3] = {
+  {0, "Ball", 1},
+  {1, "Red Car", 1},
+  {2, "Solder", 1}
+};
+
+ObjectDetectionItem itemListprevious[80] = {
+    {0,  "person",         0},
     {1,  "bicycle",        1},
     {2,  "car",            1},
     {3,  "motorbike",      1},
@@ -67,17 +73,17 @@ ObjectDetectionItem itemList[80] = {
     {53, "pizza",          1},
     {54, "donut",          1},
     {55, "cake",           1},
-    {56, "chair",          1},
+    {56, "chair",          0},
     {57, "sofa",           1},
     {58, "pottedplant",    1},
     {59, "bed",            1},
     {60, "diningtable",    1},
     {61, "toilet",         1},
-    {62, "tvmonitor",      1},
+    {62, "tvmonitor",      0},
     {63, "laptop",         1},
-    {64, "mouse",          1},
+    {64, "mouse",          0},
     {65, "remote",         1},
-    {66, "keyboard",       1},
+    {66, "keyboard",       0},
     {67, "cell phone",     1},
     {68, "microwave",      1},
     {69, "oven",           1},
