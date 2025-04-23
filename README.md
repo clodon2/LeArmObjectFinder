@@ -15,12 +15,14 @@ I created a timer class to track if the arm was still moving, which works in con
 The arm can be controlled with a wireless remote using basic infrared commands. This allows us to showcase multiple object detection methods and shut off the arm if something goes wrong (unplugging it works too). See [IR.ino](Arduino/IR.ino).
 
 ## Infrared Distance Sensor
+![image](https://github.com/user-attachments/assets/1b7e5c75-6b7e-471f-8c76-503ed2366f56)
 Distance to objects is determined with a VL53L0/1XV2 IR distance sensor, which is a stunningly accurate and small sensor. Implemented with the VL53L0X.h library, we use it for grabbing objects, in the camera pickup algorithm, and the modified sonar sensor search (working with IR). 
 
 ## Grabbing
 The grabbing algorithm scans around the object that was detected and determines roughly how big it is and how to grab it. See [grab.cpp](Arduino/grab.cpp) and [grab.h](Arduino/grab.h).
 
 ## Camera
+![image](https://github.com/user-attachments/assets/e7640de8-f189-46aa-a87a-02aad169303a)
 A camera with on-board processing (AMB82-Mini) is being implemented. Currently, the camera has a serial connection (tx pin 21, rx pin 22) to the arduino through a software serial connection (tx pin 9, rx pin 8). This allows the camera to feed object position information to the arduino, which controls the arm and calculates movement. The camera also sends a live video feed through USB to a connected computer which can be viewed with PotPlayer's webcam/other device streamer. See [Camera](AMB82-Mini).
 
 ## Sonar 
