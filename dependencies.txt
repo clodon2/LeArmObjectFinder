@@ -1,0 +1,21 @@
+HARDWARE
+Arduino (preferably an uno)
+AMB82-Mini Camera by Realtek
+VS1838B IR receiver
+VL53L0X/1XV2 distance sensor
+HiWonder LeArm mechanical arm
+A mini breadboard
+Roughly 20 dupont wires
+A usb-usb micro cable and usb-usb type b cable
+
+SOFTWARE 
+Arduino
+Arduino uno r3 (or preferred board) compiler installed on IDE
+Hiwonder Learm LobotServoController: www.dropbox.com/scl/fo/7bgfpvpxvrt812opib8eo/ALVf6RPgvRPq8QCMHEM_vfY?e=8&file_subpath=%2FLSC+series+communication+routines&preview=LSC+series+communication+routines.zip&rlkey=j14mrtqfd6cusu5kvudzpy7uu&dl=0
+VL53L0X Library: https://docs.arduino.cc/libraries/vl53l0x/
+SoftwareSerial: https://docs.arduino.cc/learn/built-in-libraries/software-serial/
+Wire: https://docs.arduino.cc/language-reference/en/functions/communication/wire/
+
+AMB82 Mini
+Realtek Ameba Boards compiler installed on IDE: https://www.amebaiot.com/en/amebapro2-amb82-mini-arduino-getting-started/
+the above install includes all needed libararies ^
