@@ -1,8 +1,9 @@
 # Autonomous Robot Arm Program for Arduino
-![image](https://github.com/user-attachments/assets/20f55610-b40d-4bfd-8ba0-e4f257556019) ![image](https://github.com/user-attachments/assets/9ea08274-d14b-4c68-b7d0-52d0e9bcb841)
+<img src="https://github.com/user-attachments/assets/20f55610-b40d-4bfd-8ba0-e4f257556019" width="400" height="400">  <img src="https://github.com/user-attachments/assets/9ea08274-d14b-4c68-b7d0-52d0e9bcb841" width="600" height="400"> <br/>
 This project utilizes an arduino, sonar sensor, and AMB82-Mini camera to control a HiWonder Learm robotic arm. The arm can detect objects either with a [simple distance search algorithm](Arduino/sonarFind.cpp) or with computer/machine vision using the AMB82-Mini camera. Switching between arm functionality is facilitated by an 1838 infrared receiver and an infrared remote. The main program loop can be found in [armMoveReal](Arduino/armMoveReal.ino). 
 
-## Demo to be put here
+## Early Demo
+![1000003804-ezgif com-optimize](https://github.com/user-attachments/assets/6106c50e-e7bc-4af0-9b6b-cd6c22fea8c7)
 
 # Modules
 
