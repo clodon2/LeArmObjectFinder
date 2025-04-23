@@ -1,5 +1,5 @@
 # Autonomous Robot Arm Program for Arduino
-This project utilizes an arduino, sonar sensor, and AMB82-Mini camera to control a HiWonder Learm robotic arm. The arm can detect objects either with a [simple sonar search algorithm](Arduino/sonarFind.cpp) or with computer/machine vision using the AMB82-Mini camera. Switching between arm functionality is facilitated by an 1838 infrared receiver and an infrared remote. The main program loop can be found in [armMoveReal](Arduino/armMoveReal.ino). 
+This project utilizes an arduino, sonar sensor, and AMB82-Mini camera to control a HiWonder Learm robotic arm. The arm can detect objects either with a [simple distance search algorithm](Arduino/sonarFind.cpp) or with computer/machine vision using the AMB82-Mini camera. Switching between arm functionality is facilitated by an 1838 infrared receiver and an infrared remote. The main program loop can be found in [armMoveReal](Arduino/armMoveReal.ino). 
 
 ## Demo to be put here
 
@@ -14,9 +14,6 @@ I created a timer class to track if the arm was still moving, which works in con
 ## Infrared Functionality 
 The arm can be controlled with a wireless remote using basic infrared commands. This allows us to showcase multiple object detection methods and shut off the arm if something goes wrong (unplugging it works too). See [IR.ino](Arduino/IR.ino).
 
-## Sonar 
-The original searching method for the arm was with a sonar distance sensor. We scan horizontally and see if the distance changes, if it does there is an object there. See [sonarFind.cpp](Arduino/sonarFind.cpp) and [sonarFind.h](Arduino/sonarFind.h). **This was deprecated due to the sonar sensor being wildly inaccurate.**
-
 ## Infrared Distance Sensor
 Distance to objects is determined with a VL53L0/1XV2 IR distance sensor, which is a stunningly accurate and small sensor. Implemented with the VL53L0X.h library, we use it for grabbing objects, in the camera pickup algorithm, and the modified sonar sensor search (working with IR). 
 
@@ -25,3 +22,6 @@ The grabbing algorithm scans around the object that was detected and determines 
 
 ## Camera
 A camera with on-board processing (AMB82-Mini) is being implemented. Currently, the camera has a serial connection (tx pin 21, rx pin 22) to the arduino through a software serial connection (tx pin 9, rx pin 8). This allows the camera to feed object position information to the arduino, which controls the arm and calculates movement. The camera also sends a live video feed through USB to a connected computer which can be viewed with PotPlayer's webcam/other device streamer. See [Camera](AMB82-Mini).
+
+## Sonar 
+The original searching method for the arm was with a sonar distance sensor. We scan horizontally and see if the distance changes, if it does there is an object there. See [sonarFind.cpp](Arduino/sonarFind.cpp) and [sonarFind.h](Arduino/sonarFind.h). **This was deprecated due to the sonar sensor being wildly inaccurate.**
