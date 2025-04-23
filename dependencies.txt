@@ -5,7 +5,7 @@ VS1838B IR receiver
 VL53L0X/1XV2 distance sensor
 HiWonder LeArm mechanical arm
 A mini breadboard
-Roughly 20 dupont wires
+Roughly 20 dupont wires (some male-female, some male-male)
 A usb-usb micro cable and usb-usb type b cable
 
 SOFTWARE 
