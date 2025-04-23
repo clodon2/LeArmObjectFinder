@@ -29,3 +29,9 @@ A camera with on-board processing (AMB82-Mini) is being implemented. Currently, 
 
 ## Sonar 
 The original searching method for the arm was with a sonar distance sensor. We scan horizontally and see if the distance changes, if it does there is an object there. See [sonarFind.cpp](Arduino/sonarFind.cpp) and [sonarFind.h](Arduino/sonarFind.h). **This was deprecated due to the sonar sensor being wildly inaccurate.**
+
+## Connections
+Connect arm 5v/gnd to breadboard if you want it to run on it's own. Camera must be connected via usb to a computer and opened with potplayer.
+![image](https://github.com/user-attachments/assets/a366f590-74c2-4102-9031-019bb60866e3)
+
+
