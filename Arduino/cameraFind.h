@@ -5,4 +5,6 @@
 
 int camera_find(armHandler*);
 
+bool camera_find_reset(armHandler*);
+
 #endif

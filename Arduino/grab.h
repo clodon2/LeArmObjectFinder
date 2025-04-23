@@ -5,4 +5,6 @@
 
 int simple_grab(armHandler*);
 
+int camera_grab(armHandler*);
+
 #endif

@@ -56,12 +56,19 @@ armHandler::armHandler() {
 
 // begin serial communication and reset arm
 void armHandler::setup() {
-  Serial.println("test");
   armSerial.begin(9600);
   camSerial.begin(31250);
   Serial.begin(9600);
   Wire.begin();
+  delay(10);
   // setup IR
+  if (!IR_sensor.init()) {
+    Serial.println("VL53L0X initialization failed!");
+    while (!IR_sensor.init()) {
+      Serial.println("resolving VL53L0X init error");
+      resetIR();
+    };
+  }
   IR_sensor.setTimeout(500);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
@@ -134,6 +141,17 @@ bool armHandler::toggleIR() {
   return true;
 }
 
+// manually turn off ir and re intialize it
+bool armHandler::resetIR() {
+  digitalWrite(2, LOW);
+  delay(100);
+  digitalWrite(2, HIGH);
+  delay(100);
+  IR_sensor.init();
+  IR_sensor.setTimeout(500);
+  delay(200);
+}
+
 int* armHandler::getCameraObjects() {
   camSerial.listen();
 
@@ -141,87 +159,57 @@ int* armHandler::getCameraObjects() {
   static int coordinates[4] = {-1, -1, -1, -1};
 
   int count = 0;
-
-  // while there is data coming in, read it
-
-  // and send to the hardware serial port:
-  /*
-  bool reading_data = false;
-  char start_char = '<';
-  char end_char = '>';
-  char received;
-  const byte char_num = 32;
-  char received_full[char_num];
-  char received_temp[char_num];
-  int received_index = 0;
-
-  Serial.println("Cam Info: ");
-  if (camSerial.available() > 0) {
-    received = camSerial.read();
-    if (received == start_char) {
-      Serial.println("started");
-      reading_data = true;
-      String object_type = camSerial.readStringUntil("\n");
-      int top_left_x = camSerial.parseInt();
-      int top_left_y = camSerial.parseInt();
-      int bottom_right_x = camSerial.parseInt();
-      int bottom_right_y = camSerial.parseInt();
-      camSerial.read();
-      reading_data = false;
-    }
-    
-    while (reading_data) {
-      received = camSerial.read();
-      if (received == end_char) {
-        received_full[received_index] = '\0';
-        reading_data = false;
-      }
-      else {
-        received_full[received_index] = received;
-        received_index += 1;
-        if (received_index >= char_num) {
-          received_index = char_num - 1;
+  
+  if (camSerial.available()) {
+    bool starting = true;
+    bool reading = true;
+    char current_int[8] = {0};
+    int read_index = 0;
+    int array_index = 0;
+    while (starting) {
+      if (camSerial.available()) {
+        char start_char = camSerial.read();
+        if (start_char == '.') {
+          starting = false;
         }
       }
     }
-    
+    char start_char = camSerial.read();
+    while (reading) {
+      if (camSerial.available()){
+        char read_character = camSerial.read();
+
+        if (read_character == '.' || array_index >= 4) {
+          current_int[read_index] = '\0';  // null-terminate the string
+          coordinates[array_index++] = atoi(current_int);
+          read_index = 0;  // reset for next message
+          reading = false;
+        } 
+        else if (read_character == ' ' || read_index >= sizeof(current_int) - 1) {
+          current_int[read_index] = '\0';
+          coordinates[array_index++] = atoi(current_int);
+          memset(current_int, 0, sizeof(current_int));
+          read_index = 0;
+        }
+        else {
+          current_int[read_index++] = read_character;
+        }
+      }
+    }
   }
-  
-  Serial.println(received_full);
-  strcpy(received_temp, received_full);
 
-  char * strtokIndx; // this is used by strtok() as an index
-
-  strtokIndx = strtok(received_temp,"\n");      // get the first part - the string
-  strcpy(obj_type, strtokIndx); // copy it to messageFromPC
-
-  for (int i=0; i < 4; i++) {
-    strtokIndx = strtok(NULL, "\n"); // this continues where the previous call left off
-    coordinates[i] = atoi(strtokIndx);     // convert this part to an integer
+  if (coordinates[0] == 0 && coordinates[1] == 0 && coordinates[2] == 0 && coordinates[3] == 0) {
+    coordinates[0] = -1;
+    coordinates[1] = -1;
+    coordinates[2] = -1;
+    coordinates[3] = -1;
   }
-
-  Serial.println("non-working: ");
-  Serial.print(coordinates[1]);
-  Serial.println();
-  */
-
-  
-  if (camSerial.available() > 0) {
-    int top_left_x = camSerial.parseInt();
-    int top_left_y = camSerial.parseInt();
-    int bottom_right_x = camSerial.parseInt();
-    int bottom_right_y = camSerial.parseInt();
-
-    coordinates[0] = top_left_x;
-    coordinates[1] = top_left_y;
-    coordinates[2] = bottom_right_x;
-    coordinates[3] = bottom_right_y;
-  }
-  
+  /*
   for (int i=0; i < 4; i++) {
     Serial.print(coordinates[i]);
     Serial.print(", ");
   }
   Serial.print("\n");
+  */
   return coordinates;
 }

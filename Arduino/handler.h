@@ -31,6 +31,7 @@ class armHandler {
     VL53L0X* getIR();
     bool toggleIR();
     int* getCameraObjects();
+    bool resetIR();
 };
 
 

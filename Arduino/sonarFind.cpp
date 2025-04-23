@@ -51,6 +51,7 @@ int sonar_find_horizontal(armHandler* handler) {
     handler->reset();
     reset_values();
     ir->stopContinuous();
+    Serial.println("Nothing Found");
     return 2;
   }
 
@@ -59,13 +60,17 @@ int sonar_find_horizontal(armHandler* handler) {
   if (past_distance == 0) {
     past_distance = distance;
   }
+  Serial.println(ir->timeoutOccurred());
   Serial.print(distance);
   Serial.print(" ");
   Serial.print(past_distance);
   Serial.print(" ");
-  Serial.println(object_counter);
   if (is_object(distance, past_distance)) {
     reset_values();
+    first_iteration = true;
+    ir->stopContinuous();
+    Serial.println("object centered");
+    delay(10);
     return 1;
   }
   past_distance = distance;
